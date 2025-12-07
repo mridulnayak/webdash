@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+
+    <style>
+        body {
+            background-color: #fafafa;
+            font-family: sans-serif;
+            margin: 0px;
+        }
+        
+        /* main wrapper */
+        .container { 
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        .top-bar {
+            background: #fff;
+            padding: 15px;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .boxes {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .box {
+            background: white;
+            width: 30%;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px #ccc;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        /* mobile fix */
+        @media (max-width: 600px) {
+            .box { width: 100%; }
+        }
+
+        h3 { color: grey; font-size: 14px; }
+        h1 { margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <h2 style="margin:0;">Donation Tracker</h2>
+    </div>
+
+    <div class="container">
+        
+        <div class="boxes">
+            <div class="box">
+                <h3>TOTAL RAISED</h3>
+                <h1>$14,500</h1>
+            </div>
+
+            <div class="box">
+                <h3>DONORS</h3>
+                <h1 style="color: #2ecc71;">342</h1> 
+            </div>
+
+            <div class="box">
+                <h3>GOAL</h3>
+                <h1>72%</h1>
+            </div>
+        </div>
+
+        <br>
+
+        <div style="background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px #ccc;">
+            <canvas id="myChart" style="width:100%; max-height: 400px;"></canvas>
+        </div>
+
+    </div>
+
+    <script>
+        var ctx = document.getElementById('myChart');
+
+        // var temp_data = [10, 20, 30]; 
+
+        var myChart = new Chart(ctx, {
+            type: 'line', 
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June'],
+                datasets: [{
+                    label: 'Donation Amount',
+                    data: [1200, 1900, 3000, 2500, 2000, 3900],
+                    borderColor: 'blue',
+                    backgroundColor: 'lightblue',
+                    borderWidth: 1,
+                    fill: true
+                    // tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
