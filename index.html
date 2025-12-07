@@ -3,236 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Impact Dashboard Pro</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Cyber-Impact Dashboard</title>
+    
+    <!-- 1. Chart.js for the graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 2. Vanilla-Tilt for the 3D hover effect -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+    <!-- 3. Google Fonts (Inter + Orbitron for the sci-fi number look) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <!-- 4. FontAwesome for cool icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        /* Defining our cool color palette variables */
         :root {
-            --primary-dark: #0f2027;
-            --primary-blue: #20bdff;
-            --accent-green: #2ecc71;
-            --bg-gradient: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            --bg-dark: #090910;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --neon-blue: #00f3ff;
+            --neon-pink: #bc13fe;
+            --neon-green: #0aff60;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
         }
 
         body {
-            /* Using the gradient background */
-            background: var(--bg-gradient);
-            font-family: 'Poppins', sans-serif; /* Using the new font */
-            margin: 0px;
-            color: #333;
-            min-height: 100vh; /* Ensure full height for gradient */
+            background-color: var(--bg-dark);
+            /* Dynamic animated background mesh */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(188, 19, 254, 0.15) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(0, 243, 255, 0.15) 0%, transparent 25%);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Floating background animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        h1 {
+            font-size: 28px;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .user-badge {
+            background: var(--card-bg);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            font-size: 14px;
+        }
+
+        /* --- 3D CARDS --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            /* Glassmorphism settings */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            
+            /* 3D Settings */
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            transition: transform 0.1s; /* Smooth tilt */
+        }
+
+        /* Elements popping out of the card in 3D */
+        .card-content {
+            transform: translateZ(30px); /* Pushes text forward */
+        }
+
+        .icon-box {
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .number {
+            font-family: 'Orbitron', sans-serif; /* Sci-fi font */
+            font-size: 42px;
+            font-weight: 700;
+            margin: 10px 0 0 0;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        /* Specific Card Colors */
+        .blue-glow .number { color: var(--neon-blue); text-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
+        .blue-glow .icon-box { color: var(--neon-blue); border: 1px solid rgba(0, 243, 255, 0.3); }
+
+        .green-glow .number { color: var(--neon-green); text-shadow: 0 0 20px rgba(10, 255, 96, 0.4); }
+        .green-glow .icon-box { color: var(--neon-green); border: 1px solid rgba(10, 255, 96, 0.3); }
+
+        .pink-glow .number { color: var(--neon-pink); text-shadow: 0 0 20px rgba(188, 19, 254, 0.4); }
+        .pink-glow .icon-box { color: var(--neon-pink); border: 1px solid rgba(188, 19, 254, 0.3); }
+
+        /* --- CHART SECTION --- */
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            position: relative;
+            height: 400px;
         }
         
-        /* Keyframe Animations */
-        /* Fade In Up animation for entrance */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .top-bar {
-            background: rgba(255, 255, 255, 0.1); /* Semi-transparent */
-            backdrop-filter: blur(10px); /* Glassmorphism effect */
-            padding: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .top-bar h2 {
-            margin:0;
-            color: white;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        .container { 
-            width: 90%;
-            max-width: 1100px;
-            margin: 20px auto;
-            /* Apply animation to the whole container */
-            animation: fadeInUp 1s ease-out forwards;
-        }
-
-        .boxes {
+        .chart-header {
             display: flex;
-            flex-wrap: wrap;
             justify-content: space-between;
-            gap: 20px; /* Adds space between items */
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        .box {
-            background: white;
-            flex: 1 1 300px; /* Better responsiveness than fixed width 30% */
-            padding: 25px;
-            box-sizing: border-box;
-            border-radius: 15px; /* Rounder corners */
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            text-align: center;
-            transition: all 0.3s ease; /* Smooth transition for hover */
-            position: relative;
-            overflow: hidden;
+        .chart-header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: white;
         }
 
-        /* Cool Hover Effect for cards */
-        .box:hover {
-            transform: translateY(-10px) scale(1.02); /* Lift up and slight grow */
-            box-shadow: 0 20px 40px rgba(32, 189, 255, 0.2); /* Blue glow shadow */
+        /* Customizing the live pulsing dot */
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--neon-green);
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(10, 255, 96, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(10, 255, 96, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(10, 255, 96, 0); }
         }
 
-        /* A subtle colored bar at the top of cards */
-        .box::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 5px;
-            background: var(--primary-blue);
-        }
-        .box.green-accent::before { background: var(--accent-green); }
-
-        h3 { 
-            color: #888; 
-            font-size: 13px; 
-            font-weight: 600; 
-            letter-spacing: 1px; 
-            margin-bottom: 10px;
-        }
-
-        /* Styling the big numbers */
-        .counter-value { 
-            margin-top: 5px; 
-            font-size: 38px;
-            font-weight: 700;
-            color: var(--primary-dark);
-        }
-
-        /* Chart container styling */
-        .chart-wrapper {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-top: 30px;
-            /* Animation delay so it appears after cards */
-            animation: fadeInUp 1s ease-out 0.3s forwards; 
-            opacity: 0; /* Start hidden before animation runs */
-        }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <h2>🚀 Charity Impact Dashboard</h2>
-    </div>
-
     <div class="container">
-        
-        <div class="boxes">
-            <div class="box">
-                <h3>TOTAL RAISED</h3>
-                <div class="counter-value" data-target="14500">$0</div>
+        <header>
+            <h1><i class="fa-solid fa-cube"></i> Impact<span style="color:white">OS</span></h1>
+            <div class="user-badge">
+                <i class="fa-solid fa-user-astronaut"></i> Admin View
+            </div>
+        </header>
+
+        <!-- 
+            3D CARDS 
+            data-tilt: Enables the 3D effect
+            data-tilt-glare: Adds the shiny reflection
+            data-tilt-max: How much it tilts
+        -->
+        <div class="stats-grid">
+            
+            <!-- Card 1 -->
+            <div class="card blue-glow" data-tilt data-tilt-glare data-tilt-max="15">
+                <div class="card-content">
+                    <div class="icon-box"><i class="fa-solid fa-sack-dollar"></i></div>
+                    <h3>Funds Raised</h3>
+                    <!-- Counter Animation -->
+                    <div class="number counter" data-target="14500">$0</div>
+                </div>
             </div>
 
-            <div class="box green-accent">
-                <h3>DONORS</h3>
-                <div class="counter-value" style="color: var(--accent-green);" data-target="342">0</div> 
+            <!-- Card 2 -->
+            <div class="card pink-glow" data-tilt data-tilt-glare data-tilt-max="15">
+                <div class="card-content">
+                    <div class="icon-box"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <h3>Active Donors</h3>
+                    <div class="number counter" data-target="342">0</div>
+                </div>
             </div>
 
-            <div class="box">
-                <h3>GOAL REACHED</h3>
-                <div class="counter-value" data-target="72">0%</div>
+            <!-- Card 3 -->
+            <div class="card green-glow" data-tilt data-tilt-glare data-tilt-max="15">
+                <div class="card-content">
+                    <div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
+                    <h3>Goal Status</h3>
+                    <div class="number counter" data-target="72">0%</div>
+                </div>
             </div>
+
         </div>
 
-        <div class="chart-wrapper">
-            <canvas id="myChart" style="width:100%; height: 400px;"></canvas>
+        <!-- CHART SECTION -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <h2>Real-time Analytics</h2>
+                <div class="live-indicator">
+                    <div class="dot"></div> LIVE DATA
+                </div>
+            </div>
+            <canvas id="impactChart"></canvas>
         </div>
-
     </div>
 
     <script>
-        // --- 1. THE SUPERCOOL DYNAMIC CHART ---
-        var ctx = document.getElementById('myChart').getContext('2d');
+        // --- 1. CONFIGURING THE 3D TILT EFFECT ---
+        VanillaTilt.init(document.querySelectorAll(".card"), {
+            max: 15, // Max tilt rotation
+            speed: 400, // Speed of the enter/exit transition
+            glare: true, // Add "shiny" glare
+            "max-glare": 0.2, // Opacity of glare
+        });
 
-        // Create a gradient fill for the chart line so it fades out towards the bottom
-        var gradientFill = ctx.createLinearGradient(0, 0, 0, 400);
-        gradientFill.addColorStop(0, 'rgba(32, 189, 255, 0.5)'); // Bright blue at top
-        gradientFill.addColorStop(1, 'rgba(32, 189, 255, 0.0)');   // Transparent at bottom
+        // --- 2. THE NEON CHART ---
+        const ctx = document.getElementById('impactChart').getContext('2d');
 
-        var myChart = new Chart(ctx, {
-            type: 'line', 
+        // Create a flashy gradient
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(188, 19, 254, 0.5)'); // Neon Pink
+        gradient.addColorStop(1, 'rgba(188, 19, 254, 0)');   // Transparent
+
+        new Chart(ctx, {
+            type: 'line',
             data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June'],
                 datasets: [{
-                    label: 'Donation Amount ($)',
+                    label: 'Donations',
                     data: [1200, 1900, 3000, 2500, 2000, 3900],
-                    borderColor: '#20bdff', // Brighter blue line
-                    pointBackgroundColor: '#ffffff',
-                    pointBorderColor: '#20bdff',
-                    pointBorderWidth: 3,
-                    pointRadius: 6, // Bigger dots
-                    pointHoverRadius: 8,
-                    backgroundColor: gradientFill, // Use the gradient we made
+                    borderColor: '#bc13fe', // Pink Line
+                    backgroundColor: gradient,
                     borderWidth: 3,
-                    fill: true,
-                    tension: 0.4 // Make line super smooth
+                    tension: 0.4, // Smooth curves
+                    pointBackgroundColor: '#090910', // Dark center for dots
+                    pointBorderColor: '#fff', // White border for dots
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 10,
+                    fill: true
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false } // Hide legend for cleaner look
+                    legend: { display: false }, // Hide legend
+                    tooltip: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        titleColor: '#000',
+                        bodyColor: '#000',
+                        padding: 10,
+                        cornerRadius: 10,
+                        displayColors: false
+                    }
                 },
                 scales: {
                     y: {
-                        beginAtZero: true,
-                        grid: { color: '#f0f0f0' } // Subtle grid lines
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' }, // Faint grid
+                        ticks: { color: '#a0a0a0' },
+                        border: { display: false }
                     },
                     x: {
-                        grid: { display: false } // Hide X-axis grid
+                        grid: { display: false },
+                        ticks: { color: '#a0a0a0' },
+                        border: { display: false }
                     }
                 },
                 animation: {
-                    duration: 2000, // Slow down initial chart animation (2 seconds)
+                    duration: 2000,
                     easing: 'easeOutQuart'
                 }
             }
         });
 
-        // --- 2. THE NUMBER COUNTER ANIMATION SCRIPT ---
-        // Find all elements with the class 'counter-value'
-        const counters = document.querySelectorAll('.counter-value');
-        const speed = 50; // The lower the slower
+        // --- 3. THE NUMBER COUNTER (Keep the logic, update styling) ---
+        const counters = document.querySelectorAll('.counter');
+        const speed = 40; 
 
         counters.forEach(counter => {
             const updateCount = () => {
-                // Get the target number from the data-target attribute
                 const target = +counter.getAttribute('data-target');
-                // Get current value
-                const count = +counter.innerText.replace(/[$,%]/g, ''); // Remove $ or % for calculation
-                
-                // Calculate increment step
+                const count = +counter.innerText.replace(/[$,%]/g, '');
                 const inc = target / speed;
 
-                // Check if current count is less than target
                 if (count < target) {
-                    // Add increment and format back with $ or % if needed
                     let prefix = counter.innerText.includes('$') ? '$' : '';
                     let suffix = counter.innerText.includes('%') ? '%' : '';
-                    
                     counter.innerText = prefix + Math.ceil(count + inc) + suffix;
-                    // Call function every 20ms
-                    setTimeout(updateCount, 20);
+                    setTimeout(updateCount, 25);
                 } else {
-                    // Ensure it ends on the exact target number
                     let prefix = counter.innerText.includes('$') ? '$' : '';
                     let suffix = counter.innerText.includes('%') ? '%' : '';
                     counter.innerText = prefix + target + suffix;
@@ -241,6 +347,5 @@
             updateCount();
         });
     </script>
-
 </body>
 </html>
