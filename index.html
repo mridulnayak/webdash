@@ -1,59 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impact Dashboard Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
+        /* Defining our cool color palette variables */
+        :root {
+            --primary-dark: #0f2027;
+            --primary-blue: #20bdff;
+            --accent-green: #2ecc71;
+            --bg-gradient: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+        }
+
         body {
-            background-color: #fafafa;
-            font-family: sans-serif;
+            /* Using the gradient background */
+            background: var(--bg-gradient);
+            font-family: 'Poppins', sans-serif; /* Using the new font */
             margin: 0px;
+            color: #333;
+            min-height: 100vh; /* Ensure full height for gradient */
         }
         
-        /* main wrapper */
-        .container { 
-            width: 90%;
-            margin: 20px auto;
+        /* Keyframe Animations */
+        /* Fade In Up animation for entrance */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .top-bar {
-            background: #fff;
-            padding: 15px;
-            border-bottom: 2px solid #eee;
-            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1); /* Semi-transparent */
+            backdrop-filter: blur(10px); /* Glassmorphism effect */
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .top-bar h2 {
+            margin:0;
+            color: white;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .container { 
+            width: 90%;
+            max-width: 1100px;
+            margin: 20px auto;
+            /* Apply animation to the whole container */
+            animation: fadeInUp 1s ease-out forwards;
         }
 
         .boxes {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
+            gap: 20px; /* Adds space between items */
         }
 
         .box {
             background: white;
-            width: 30%;
-            padding: 20px;
+            flex: 1 1 300px; /* Better responsiveness than fixed width 30% */
+            padding: 25px;
             box-sizing: border-box;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px #ccc;
+            border-radius: 15px; /* Rounder corners */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             text-align: center;
+            transition: all 0.3s ease; /* Smooth transition for hover */
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Cool Hover Effect for cards */
+        .box:hover {
+            transform: translateY(-10px) scale(1.02); /* Lift up and slight grow */
+            box-shadow: 0 20px 40px rgba(32, 189, 255, 0.2); /* Blue glow shadow */
+        }
+
+        /* A subtle colored bar at the top of cards */
+        .box::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 5px;
+            background: var(--primary-blue);
+        }
+        .box.green-accent::before { background: var(--accent-green); }
+
+        h3 { 
+            color: #888; 
+            font-size: 13px; 
+            font-weight: 600; 
+            letter-spacing: 1px; 
             margin-bottom: 10px;
         }
 
-        /* mobile fix */
-        @media (max-width: 600px) {
-            .box { width: 100%; }
+        /* Styling the big numbers */
+        .counter-value { 
+            margin-top: 5px; 
+            font-size: 38px;
+            font-weight: 700;
+            color: var(--primary-dark);
         }
 
-        h3 { color: grey; font-size: 14px; }
-        h1 { margin-top: 5px; }
+        /* Chart container styling */
+        .chart-wrapper {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 30px;
+            /* Animation delay so it appears after cards */
+            animation: fadeInUp 1s ease-out 0.3s forwards; 
+            opacity: 0; /* Start hidden before animation runs */
+        }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <h2 style="margin:0;">Donation Tracker</h2>
+        <h2>🚀 Charity Impact Dashboard</h2>
     </div>
 
     <div class="container">
@@ -61,55 +137,108 @@
         <div class="boxes">
             <div class="box">
                 <h3>TOTAL RAISED</h3>
-                <h1>$14,500</h1>
+                <div class="counter-value" data-target="14500">$0</div>
             </div>
 
-            <div class="box">
+            <div class="box green-accent">
                 <h3>DONORS</h3>
-                <h1 style="color: #2ecc71;">342</h1> 
+                <div class="counter-value" style="color: var(--accent-green);" data-target="342">0</div> 
             </div>
 
             <div class="box">
-                <h3>GOAL</h3>
-                <h1>72%</h1>
+                <h3>GOAL REACHED</h3>
+                <div class="counter-value" data-target="72">0%</div>
             </div>
         </div>
 
-        <br>
-
-        <div style="background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px #ccc;">
-            <canvas id="myChart" style="width:100%; max-height: 400px;"></canvas>
+        <div class="chart-wrapper">
+            <canvas id="myChart" style="width:100%; height: 400px;"></canvas>
         </div>
 
     </div>
 
     <script>
-        var ctx = document.getElementById('myChart');
+        // --- 1. THE SUPERCOOL DYNAMIC CHART ---
+        var ctx = document.getElementById('myChart').getContext('2d');
 
-        // var temp_data = [10, 20, 30]; 
+        // Create a gradient fill for the chart line so it fades out towards the bottom
+        var gradientFill = ctx.createLinearGradient(0, 0, 0, 400);
+        gradientFill.addColorStop(0, 'rgba(32, 189, 255, 0.5)'); // Bright blue at top
+        gradientFill.addColorStop(1, 'rgba(32, 189, 255, 0.0)');   // Transparent at bottom
 
         var myChart = new Chart(ctx, {
             type: 'line', 
             data: {
                 labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June'],
                 datasets: [{
-                    label: 'Donation Amount',
+                    label: 'Donation Amount ($)',
                     data: [1200, 1900, 3000, 2500, 2000, 3900],
-                    borderColor: 'blue',
-                    backgroundColor: 'lightblue',
-                    borderWidth: 1,
-                    fill: true
-                    // tension: 0.1
+                    borderColor: '#20bdff', // Brighter blue line
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#20bdff',
+                    pointBorderWidth: 3,
+                    pointRadius: 6, // Bigger dots
+                    pointHoverRadius: 8,
+                    backgroundColor: gradientFill, // Use the gradient we made
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4 // Make line super smooth
                 }]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false } // Hide legend for cleaner look
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        grid: { color: '#f0f0f0' } // Subtle grid lines
+                    },
+                    x: {
+                        grid: { display: false } // Hide X-axis grid
                     }
+                },
+                animation: {
+                    duration: 2000, // Slow down initial chart animation (2 seconds)
+                    easing: 'easeOutQuart'
                 }
             }
+        });
+
+        // --- 2. THE NUMBER COUNTER ANIMATION SCRIPT ---
+        // Find all elements with the class 'counter-value'
+        const counters = document.querySelectorAll('.counter-value');
+        const speed = 50; // The lower the slower
+
+        counters.forEach(counter => {
+            const updateCount = () => {
+                // Get the target number from the data-target attribute
+                const target = +counter.getAttribute('data-target');
+                // Get current value
+                const count = +counter.innerText.replace(/[$,%]/g, ''); // Remove $ or % for calculation
+                
+                // Calculate increment step
+                const inc = target / speed;
+
+                // Check if current count is less than target
+                if (count < target) {
+                    // Add increment and format back with $ or % if needed
+                    let prefix = counter.innerText.includes('$') ? '$' : '';
+                    let suffix = counter.innerText.includes('%') ? '%' : '';
+                    
+                    counter.innerText = prefix + Math.ceil(count + inc) + suffix;
+                    // Call function every 20ms
+                    setTimeout(updateCount, 20);
+                } else {
+                    // Ensure it ends on the exact target number
+                    let prefix = counter.innerText.includes('$') ? '$' : '';
+                    let suffix = counter.innerText.includes('%') ? '%' : '';
+                    counter.innerText = prefix + target + suffix;
+                }
+            };
+            updateCount();
         });
     </script>
 
